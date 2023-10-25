@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IMDb Movie Information Saver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        #container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .movie-info {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>IMDb Movie Information Saver</h1>
+        <label for="movieTitle">Movie Title:</label>
+        <input type="text" id="movieTitle" placeholder="Enter movie title">
+        <button onclick="searchMovieInfo()">Search</button>
+
+        <div class="movie-info" id="movieInfo">
+        </div>
+    </div>
+
+    <script>
+        function searchMovieInfo() {
+            const apiKey = "5eb46a36"; // Replace with your actual API key
+            const movieTitle = document.getElementById("movieTitle").value;
+
+            if (movieTitle.trim() === "") {
+                alert("Please enter a movie title.");
+                return;
+            }
+
+            fetch(`https://www.omdbapi.com/?t=${movieTitle}&apikey=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.Response === "True") {
+                        const title = data.Title;
+                        const year = data.Year;
+                        const genre = data.Genre;
+                        const language = data.Language;
+                        const rating = data.imdbRating;
+                        const summary = data.Plot;
+                        const poster = data.Poster;
+
+                        const movieInfo = `
+                            <h2>${title} (${year})</h2>
+                            <img src="${poster}" alt="${title} Poster">
+                            <p>🎭 : ${genre}</p>
+                            <p>👄 : ${language}</p>
+                            <p>⭐️ : ${rating} ➖ IMDB</p>
+                            <p>💬   ${summary}</p>
+                            <p>*DOWNLOAD LINK*</p>
+                        `;
+
+                        document.getElementById("movieInfo").innerHTML = movieInfo;
+                    } else {
+                        alert("Movie not found on IMDb.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching movie data:", error);
+                    alert("An error occurred while fetching movie data.");
+                });
+        }
+    </script>
+</body>
+</html>
